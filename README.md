@@ -1,4 +1,30 @@
 # Daily Work
+## 26-01-24
+Resizing Image into Batch Size so that it will reduce the problem of overfitting 
+
+### Tasks Completed:
+* Coding Complete
+* Test performed on API
+
+### Online Research and Tutorials
+* Not Required
+
+### Setup Instructions
+I don't have to install any software for this because I already installed it.
+* VS Code
+* Python Library
+* Postman
+* requirement.txt file having all library of python file.
+  
+### Usage
+Deep Fake Detection Using Deep Learning
+
+### Work Progress
+All those tasks have been completed successfully.
+
+### Acknowledgments
+I completed my tasks on my own in my learning journey.
+
 ## 25-01-24
 Problem of 5 frame of video is resolved. Update the previus API, now it is checking 5 frame and giving no of fake or real. 
 
@@ -25,7 +51,6 @@ All those tasks have been completed successfully.
 
 ### Acknowledgments
 I completed my tasks on my own in my learning journey.
-
 
 ## 24-01-24
 To check 5  random frame from video and check real or fake image.
