@@ -1,5 +1,33 @@
 # Daily Work
-## 30-11-23
+## 25-01-24
+Problem of 5 frame of video is resolved. Update the previus API, now it is checking 5 frame and giving no of fake or real. 
+
+### Tasks Completed:
+* Created API
+* Performed API testing on Postman
+* Deployed API on Render
+
+### Online Research and Tutorials
+* Not Required
+
+### Setup Instructions
+I don't have to install any software for this because I already installed it.
+* VS Code
+* Python Library
+* Postman
+* requirement.txt file having all library of python file.
+  
+### Usage
+Deep Fake Detection Using Deep Learning
+
+### Work Progress
+All those tasks have been completed successfully.
+
+### Acknowledgments
+I completed my tasks on my own in my learning journey.
+
+
+## 24-01-24
 To check 5  random frame from video and check real or fake image.
 
 ### Research:
@@ -26,7 +54,7 @@ Tried, but lots of problems occurred, such as the database filling with images. 
 ### Acknowledgments
 I completed my tasks on my own in my learning journey.
 
-## 30-11-23
+## 23-01-24
 To check 5  random frame from video and check real or fake image.
 
 ### Research:
@@ -36,7 +64,7 @@ To check 5  random frame from video and check real or fake image.
   * Firebase
 
 ### Online Research and Tutorials
-* The Fireabse Database link: [https://firebase.google.com/docs]
+* The Image Database 
 
 ### Setup Instructions
 It is a learning lesson .
