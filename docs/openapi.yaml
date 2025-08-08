@@ -1,0 +1,208 @@
+openapi: 3.0.3
+info:
+  title: Deepfake Detection API
+  version: 1.0.0
+  description: |
+    API for detecting deepfakes in images and videos. Videos are sampled at a small number of frames
+    (default 5), and predictions are aggregated into a single overall decision.
+servers:
+  - url: https://<your-render-app>.onrender.com
+    description: Production (Render)
+  - url: http://localhost:8000
+    description: Local development
+paths:
+  /health:
+    get:
+      summary: Liveness probe
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ok
+  /v1/predict/image:
+    post:
+      summary: Classify a single image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                model_version:
+                  type: string
+                  description: Optional model tag/version
+      responses:
+        '200':
+          description: Prediction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImagePrediction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '500':
+          $ref: '#/components/responses/ServerError'
+  /v1/predict/video:
+    post:
+      summary: Classify a video by sampling frames and aggregating predictions
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                num_frames:
+                  type: integer
+                  default: 5
+                  minimum: 1
+                  maximum: 25
+                model_version:
+                  type: string
+                  description: Optional model tag/version
+      responses:
+        '200':
+          description: Prediction with per-frame details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoPrediction'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '500':
+          $ref: '#/components/responses/ServerError'
+components:
+  schemas:
+    CommonPrediction:
+      type: object
+      properties:
+        label:
+          type: string
+          enum: [real, fake]
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        details:
+          type: object
+          additionalProperties: true
+    ImagePrediction:
+      allOf:
+        - $ref: '#/components/schemas/CommonPrediction'
+      example:
+        label: fake
+        confidence: 0.92
+        details:
+          model_version: latest
+    FramePrediction:
+      type: object
+      properties:
+        frame_index:
+          type: integer
+        timestamp_ms:
+          type: integer
+        label:
+          type: string
+          enum: [real, fake]
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+    VideoPrediction:
+      allOf:
+        - $ref: '#/components/schemas/CommonPrediction'
+      properties:
+        details:
+          type: object
+          properties:
+            model_version:
+              type: string
+            per_frame:
+              type: array
+              items:
+                $ref: '#/components/schemas/FramePrediction'
+      example:
+        label: real
+        confidence: 0.81
+        details:
+          model_version: latest
+          per_frame:
+            - frame_index: 12
+              timestamp_ms: 400
+              label: real
+              confidence: 0.78
+            - frame_index: 87
+              timestamp_ms: 2900
+              label: real
+              confidence: 0.88
+            - frame_index: 131
+              timestamp_ms: 4400
+              label: real
+              confidence: 0.83
+  responses:
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: bad_request
+            message: Missing required file
+    UnsupportedMediaType:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: unsupported_media_type
+            message: Only JPEG, PNG, and WEBP images are supported
+    PayloadTooLarge:
+      description: Payload Too Large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: payload_too_large
+            message: File exceeds size limit
+    ServerError:
+      description: Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: server_error
+            message: Unexpected error
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
